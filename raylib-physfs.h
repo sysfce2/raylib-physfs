@@ -38,11 +38,7 @@ extern "C" {
 #endif
 
 #ifndef RAYLIB_PHYSFS_DEF
-#ifdef RAYLIB_PHYSFS_STATIC
-#define RAYLIB_PHYSFS_DEF static
-#else
-#define RAYLIB_PHYSFS_DEF extern
-#endif
+#define RAYLIB_PHYSFS_DEF
 #endif
 
 RAYLIB_PHYSFS_DEF bool InitPhysFS();                                              // Initialize the PhysFS file system
