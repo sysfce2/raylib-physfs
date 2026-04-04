@@ -122,7 +122,7 @@ void TracePhysFSError(const char* detail) {
  */
 unsigned char* LoadFileDataFromPhysFS(const char* fileName, int* bytesRead) {
     if (!FileExistsInPhysFS(fileName)) {
-        TraceLog(LOG_WARNING, TextFormat("PHYSFS: Tried to load unexisting file '%s'", fileName));
+        TraceLog(LOG_WARNING, TextFormat("PHYSFS: Tried to load non-existent file '%s'", fileName));
         *bytesRead = 0;
         return 0;
     }
