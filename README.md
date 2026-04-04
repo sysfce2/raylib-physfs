@@ -19,7 +19,7 @@ Load [raylib](https://www.raylib.com/) images, sounds, music, fonts and shaders 
 
 This is a header-only library. To use it, you have to do two things...
 
-1. Link both the raylib and physfs libraries. With CMake, you will see examples of linking physfs in [examples/CMakeLists.txt](examples/CMakeLists.txt)
+1. Link raylib and physfs. With CMake, you will see examples of linking physfs in [examples/CMakeLists.txt](examples/CMakeLists.txt)
 2. Define `RAYLIB_PHYSFS_IMPLEMENTATION` in one `.c` source file before including [`raylib-physfs.h`](include/raylib-physfs.h)
 
 ### Example
@@ -39,6 +39,7 @@ int main() {
 
     // Load an image through PhysFS directly from assets.zip.
     Image dog = LoadImageFromPhysFS("assets/dog.png");
+    UnloadImage(dog);
 
     // Close the file system.
     ClosePhysFS();
@@ -71,7 +72,7 @@ Music LoadMusicStreamFromPhysFS(const char* fileName);          // Load music da
 Font LoadFontFromPhysFS(const char* fileName, int fontSize, int *fontChars, int charsCount);  // Load a font from PhysFS
 Shader LoadShaderFromPhysFS(const char* vsFileName, const char* fsFileName);  // Load shader from PhysFS
 void SetPhysFSCallbacks();                                      // Set the raylib file loader/saver callbacks to use PhysFS
-const char* GetPerfDirectory(const char *organization, const char *application); // Get the user's current config directory for the application.
+const char* GetPrefDirectory(const char *organization, const char *application); // Get the user's current config directory for the application.
 ```
 
 ### Defines
