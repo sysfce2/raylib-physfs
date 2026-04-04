@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   raylib-physfs 5.5.1 - Integrate PhysFS with raylib, allowing to load images, audio and fonts from data archives.
+*   raylib-physfs 6.0.0 - Integrate PhysFS with raylib, allowing to load images, audio and fonts from data archives.
 *
 *   Copyright 2026 Rob Loach (@RobLoach)
 *
 *   DEPENDENCIES:
-*       raylib 5.5+ https://www.raylib.com/
+*       raylib 6.0+ https://www.raylib.com/
 *       physfs https://github.com/icculus/physfs
 *
 *   LICENSE: zlib/libpng
@@ -54,7 +54,7 @@ RAYLIB_PHYSFS_DEF unsigned char* LoadFileDataFromPhysFS(const char* fileName, in
 RAYLIB_PHYSFS_DEF char* LoadFileTextFromPhysFS(const char* fileName);             // Load text from a file (memory should be freed)
 RAYLIB_PHYSFS_DEF bool SetPhysFSWriteDirectory(const char* newDir);               // Set the base directory where PhysFS should write files to (defaults to the current working directory)
 RAYLIB_PHYSFS_DEF bool SaveFileDataToPhysFS(const char* fileName, void* data, int bytesToWrite);  // Save the given file data in PhysFS
-RAYLIB_PHYSFS_DEF bool SaveFileTextToPhysFS(const char* fileName, char* text);    // Save the given file text in PhysFS
+RAYLIB_PHYSFS_DEF bool SaveFileTextToPhysFS(const char* fileName, const char* text);    // Save the given file text in PhysFS
 RAYLIB_PHYSFS_DEF FilePathList LoadDirectoryFilesFromPhysFS(const char* dirPath);  // Get filenames in a directory path (memory should be freed)
 RAYLIB_PHYSFS_DEF long GetFileModTimeFromPhysFS(const char* fileName);            // Get file modification time (last write time) from PhysFS
 RAYLIB_PHYSFS_DEF Image LoadImageFromPhysFS(const char* fileName);                // Load an image from PhysFS
@@ -543,8 +543,8 @@ bool SaveFileDataToPhysFS(const char* fileName, void* data, int bytesToWrite) {
  *
  * @return True on success, false on failure.
  */
-bool SaveFileTextToPhysFS(const char* fileName, char* text) {
-    return SaveFileDataToPhysFS(fileName, text, TextLength(text));
+bool SaveFileTextToPhysFS(const char* fileName, const char* text) {
+    return SaveFileDataToPhysFS(fileName, (void*)text, TextLength(text) + 1); // +1 for the Null Terminator
 }
 
 /**
@@ -574,7 +574,6 @@ FilePathList LoadDirectoryFilesFromPhysFS(const char* dirPath) {
     // Copy into raylib-allocated memory so UnloadDirectoryFiles() can free it correctly.
     FilePathList output;
     output.count = count;
-    output.capacity = count;
     output.paths = count > 0 ? (char**)MemAlloc(count * sizeof(char*)) : 0;
     for (int i = 0; i < count; i++) {
         unsigned int len = TextLength(physfsList[i]);
