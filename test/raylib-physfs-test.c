@@ -78,6 +78,52 @@ int main(int argc, char *argv[]) {
         Assert(textFileFound, "LoadDirectoryFilesFromPhysFS() could not find text.txt");
     }
 
+    // LoadDirectoryFilesExFromPhysFS()
+    {
+        // Build the nested tests
+        AssertEqual(MakeDirectory("resources/nested"), 0);
+        AssertEqual(MakeDirectory("resources/nested/deeper"), 0);
+        Assert(SaveFileText("resources/nested/nested.txt", "Nested file"));
+        Assert(SaveFileText("resources/nested/deeper/deeper.txt", "Deeper file"));
+
+        // Load all the text files, without subdirectories
+        FilePathList flatFiles = LoadDirectoryFilesExFromPhysFS("assets", ".txt", false);
+        bool rootTextFound = false;
+        bool nestedTextFound = false;
+        for (unsigned int i = 0; i < flatFiles.count; i++) {
+            if (TextIsEqual(flatFiles.paths[i], "assets/text.txt")) {
+                rootTextFound = true;
+            }
+            if (TextIsEqual(flatFiles.paths[i], "assets/nested/nested.txt")) {
+                nestedTextFound = true;
+            }
+        }
+        UnloadDirectoryFiles(flatFiles);
+        Assert(rootTextFound, "LoadDirectoryFilesExFromPhysFS() did not include assets/text.txt");
+        AssertNot(nestedTextFound, "LoadDirectoryFilesExFromPhysFS() should not recurse when scanSubdirs is false");
+
+        // Load all the files and directories, with subdirectories.
+        FilePathList recursiveFiles = LoadDirectoryFilesExFromPhysFS("assets", ".txt;DIR", true);
+        bool nestedDirectoryFound = false;
+        bool nestedFileFound = false;
+        bool deeperFileFound = false;
+        for (unsigned int i = 0; i < recursiveFiles.count; i++) {
+            if (TextIsEqual(recursiveFiles.paths[i], "assets/nested")) {
+                nestedDirectoryFound = true;
+            }
+            if (TextIsEqual(recursiveFiles.paths[i], "assets/nested/nested.txt")) {
+                nestedFileFound = true;
+            }
+            if (TextIsEqual(recursiveFiles.paths[i], "assets/nested/deeper/deeper.txt")) {
+                deeperFileFound = true;
+            }
+        }
+        UnloadDirectoryFiles(recursiveFiles);
+        Assert(nestedDirectoryFound, "LoadDirectoryFilesExFromPhysFS() did not include directories when requested");
+        Assert(nestedFileFound, "LoadDirectoryFilesExFromPhysFS() did not include nested files");
+        Assert(deeperFileFound, "LoadDirectoryFilesExFromPhysFS() did not include deeper nested files");
+    }
+
     // LoadFileTextFromPhysFS()
     {
         char* fileText = LoadFileTextFromPhysFS("assets/text.txt");
