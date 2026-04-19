@@ -1,13 +1,19 @@
-# raylib
+# RAYLIB_VERSION
+if (NOT RAYLIB_VERSION)
+    #set(RAYLIB_VERSION 5.5)
+    set(RAYLIB_VERSION 6.0)
+endif()
+
 include(FetchContent)
 FetchContent_Declare(
     raylib
-    GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAG 5.5
-    GIT_SHALLOW 1
+    DOWNLOAD_EXTRACT_TIMESTAMP OFF
+    #URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+    URL https://github.com/raysan5/raylib/archive/refs/heads/master.zip
 )
 FetchContent_GetProperties(raylib)
-if (NOT raylib_POPULATED) # Have we downloaded raylib yet?
+
+if (NOT raylib_POPULATED)
     set(FETCHCONTENT_QUIET NO)
     FetchContent_Populate(raylib)
     set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)

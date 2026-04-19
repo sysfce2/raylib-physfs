@@ -13,14 +13,14 @@ Load [raylib](https://www.raylib.com/) images, sounds, music, fonts and shaders 
 - Enumerate across multiple archives and mounted paths
 - Save files through PhysFS
 - Set all file loading to use PhysFS via `SetPhysFSCallbacks()`
-- Find the user's configuration directory with `GetPerfDirectory()`
+- Find the user's configuration directory with `GetPrefDirectory()`
 
 ## Usage
 
 This is a header-only library. To use it, you have to do two things...
 
-1. Link both the raylib and physfs libraries. With CMake, you will see examples of linking physfs in [examples/CMakeLists.txt](examples/CMakeLists.txt)
-2. Define `RAYLIB_PHYSFS_IMPLEMENTATION` in one `.c` source file before including [`raylib-physfs.h`](include/raylib-physfs.h)
+1. Link raylib and physfs. With CMake, you will see examples of linking physfs in [examples/CMakeLists.txt](examples/CMakeLists.txt)
+2. Define `RAYLIB_PHYSFS_IMPLEMENTATION` in one `.c` source file before including [`raylib-physfs.h`](raylib-physfs.h)
 
 ### Example
 
@@ -39,6 +39,7 @@ int main() {
 
     // Load an image through PhysFS directly from assets.zip.
     Image dog = LoadImageFromPhysFS("assets/dog.png");
+    UnloadImage(dog);
 
     // Close the file system.
     ClosePhysFS();
@@ -57,10 +58,10 @@ bool MountPhysFSFromMemory(const unsigned char *fileData, int dataSize, const ch
 bool UnmountPhysFS(const char* oldDir);                         // Unmounts the given directory
 bool FileExistsInPhysFS(const char* fileName);                  // Check if the given file exists in PhysFS
 bool DirectoryExistsInPhysFS(const char* dirPath);              // Check if the given directory exists in PhysFS
-unsigned char* LoadFileDataFromPhysFS(const char* fileName, unsigned int* bytesRead);  // Load a data buffer from PhysFS (memory should be freed)
+unsigned char* LoadFileDataFromPhysFS(const char* fileName, int* bytesRead);  // Load a data buffer from PhysFS (memory should be freed)
 char* LoadFileTextFromPhysFS(const char* fileName);             // Load text from a file (memory should be freed)
 bool SetPhysFSWriteDirectory(const char* newDir);               // Set the base directory where PhysFS should write files to (defaults to the current working directory)
-bool SaveFileDataToPhysFS(const char* fileName, void* data, unsigned int bytesToWrite);  // Save the given file data in PhysFS
+bool SaveFileDataToPhysFS(const char* fileName, void* data, int bytesToWrite);  // Save the given file data in PhysFS
 bool SaveFileTextToPhysFS(const char* fileName, char* text);    // Save the given file text in PhysFS
 FilePathList LoadDirectoryFilesFromPhysFS(const char* dirPath);  // Get filenames in a directory path (memory should be freed)
 FilePathList LoadDirectoryFilesExFromPhysFS(const char *basePath, const char *filter, bool scanSubdirs);  // Get directory filepaths with filtering and optional recursive scan (memory should be freed)
@@ -72,7 +73,7 @@ Music LoadMusicStreamFromPhysFS(const char* fileName);          // Load music da
 Font LoadFontFromPhysFS(const char* fileName, int fontSize, int *fontChars, int charsCount);  // Load a font from PhysFS
 Shader LoadShaderFromPhysFS(const char* vsFileName, const char* fsFileName);  // Load shader from PhysFS
 void SetPhysFSCallbacks();                                      // Set the raylib file loader/saver callbacks to use PhysFS
-const char* GetPerfDirectory(const char *organization, const char *application); // Get the user's current config directory for the application.
+const char* GetPrefDirectory(const char *organization, const char *application); // Get the user's current config directory for the application.
 ```
 
 ### Defines

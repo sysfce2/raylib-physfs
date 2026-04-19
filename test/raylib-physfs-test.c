@@ -37,22 +37,24 @@ int main(int argc, char *argv[]) {
 
     // LoadFileDataFromPhysFS()
     {
-        unsigned int bytesRead = 0;
+        int bytesRead = 0;
         unsigned char* fileData = LoadFileDataFromPhysFS("assets/text.txt", &bytesRead);
         Assert(fileData);
         Assert(bytesRead > 0);
         UnloadFileData(fileData);
 
         unsigned char* missingFileData = LoadFileDataFromPhysFS("MissingFile.txt", &bytesRead);
-        AssertEqual(missingFileData, 0);
+        AssertEqual(missingFileData, NULL);
     }
 
     // SaveFileDataToPhysFS()
     {
         Assert(SaveFileDataToPhysFS("resources/SaveFileDataToPhysFS.txt", "Hello", 5));
-        unsigned int bytesRead = 0;
-        unsigned char* fileData = LoadFileData("resources/SaveFileDataToPhysFS.txt", &bytesRead);
+        int bytesRead = 0;
+        unsigned char* output = LoadFileData("resources/SaveFileDataToPhysFS.txt", &bytesRead);
         AssertEqual(bytesRead, 5);
+        Assert(TextIsEqual(TextSubtext((const char*)output, 0, 5), "Hello"));
+        UnloadFileData(output);
     }
 
     // SaveFileTextToPhysFS()
@@ -69,7 +71,7 @@ int main(int argc, char *argv[]) {
         bool textFileFound = false;
         Assert(files.count > 4);
         TraceLog(LOG_INFO, "LoadDirectoryFilesFromPhysFS: Files in assets: %i", files.count);
-        for (int i = 0; i < files.count; i++) {
+        for (unsigned int i = 0; i < files.count; i++) {
             if (TextIsEqual(GetFileName(files.paths[i]), "text.txt")) {
                 textFileFound = true;
             }
@@ -182,15 +184,15 @@ int main(int argc, char *argv[]) {
     // SetPhysFSCallbacks()
     SetPhysFSCallbacks();
 
-    // GetPerfDirectory
-    const char* perfDir = GetPerfDirectory("RobLoach", "raylib-physfs-test");
+    // GetPrefDirectory
+    const char* perfDir = GetPrefDirectory("RobLoach", "raylib-physfs-test");
     AssertNotEqual(perfDir, 0);
 
     // ClosePhysFS()
     Assert(ClosePhysFS());
 
     TraceLog(LOG_INFO, "================================");
-    TraceLog(LOG_INFO, "raylib-physfs-test succesful");
+    TraceLog(LOG_INFO, "raylib-physfs-test successful");
     TraceLog(LOG_INFO, "================================");
 
     return 0;
