@@ -593,7 +593,7 @@ static bool LoadDirectoryFilesFromPhysFSShouldInclude(const char *path, PHYSFS_F
         return TextFindIndex(filter, "DIR") >= 0;
     }
 
-    if (fileType == PHYSFS_FILETYPE_REGULAR) {
+    if (fileType == PHYSFS_FILETYPE_REGULAR || fileType == PHYSFS_FILETYPE_SYMLINK) {
         return IsFileExtension(path, filter);
     }
 
@@ -636,7 +636,6 @@ static bool LoadDirectoryFilesExFromPhysFSScan(const char *basePath, FilePathLis
         if (PHYSFS_stat(fullPath, &stat) == 0) {
             TracePhysFSError(fullPath);
             MemFree(fullPath);
-            success = false;
             continue;
         }
 
@@ -650,7 +649,9 @@ static bool LoadDirectoryFilesExFromPhysFSScan(const char *basePath, FilePathLis
 
         if (scanSubdirs && (stat.filetype == PHYSFS_FILETYPE_DIRECTORY)) {
             if (!LoadDirectoryFilesExFromPhysFSScan(fullPath, files, capacity, filter, scanSubdirs)) {
+                MemFree(fullPath);
                 success = false;
+                break;
             }
         }
 
@@ -662,19 +663,18 @@ static bool LoadDirectoryFilesExFromPhysFSScan(const char *basePath, FilePathLis
 }
 
 FilePathList LoadDirectoryFilesExFromPhysFS(const char *basePath, const char *filter, bool scanSubdirs) {
+    FilePathList files = { 0 };
     if ((basePath == NULL) || (basePath[0] == '\0')) {
         TraceLog(LOG_WARNING, "PHYSFS: Can't get files from an empty directory path");
-        return (FilePathList) { 0 };
+        return files;
     }
 
-    if (!DirectoryExistsInPhysFS(basePath)) {
-        TraceLog(LOG_WARNING, "PHYSFS: Can't get files from non-existant directory (%s)", basePath);
-        return (FilePathList) { 0 };
+    if (!TextIsEqual(basePath, "/") && !DirectoryExistsInPhysFS(basePath)) {
+        TraceLog(LOG_WARNING, "PHYSFS: Can't get files from non-existent directory (%s)", basePath);
+        return files;
     }
 
-    FilePathList files = { 0 };
     unsigned int capacity = 0;
-
     if (!LoadDirectoryFilesExFromPhysFSScan(basePath, &files, &capacity, filter, scanSubdirs)) {
         UnloadDirectoryFiles(files);
         return (FilePathList) { 0 };
