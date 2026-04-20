@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
         Assert(textFileFound, "LoadDirectoryFilesFromPhysFS() could not find text.txt");
     }
 
-    // LoadDirectoryFilesExFromPhysFS()
+    // LoadDirectoryFilesFromPhysFSEx()
     {
         // Build the nested tests
         AssertEqual(MakeDirectory("resources/nested"), 0);
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
         Assert(SaveFileText("resources/nested/deeper/deeper.txt", "Deeper file"));
 
         // Load all the text files, without subdirectories
-        FilePathList flatFiles = LoadDirectoryFilesExFromPhysFS("assets", ".txt", false);
+        FilePathList flatFiles = LoadDirectoryFilesFromPhysFSEx("assets", ".txt", false);
         bool rootTextFound = false;
         bool nestedTextFound = false;
         for (unsigned int i = 0; i < flatFiles.count; i++) {
@@ -101,11 +101,11 @@ int main(int argc, char *argv[]) {
             }
         }
         UnloadDirectoryFiles(flatFiles);
-        Assert(rootTextFound, "LoadDirectoryFilesExFromPhysFS() did not include assets/text.txt");
-        AssertNot(nestedTextFound, "LoadDirectoryFilesExFromPhysFS() should not recurse when scanSubdirs is false");
+        Assert(rootTextFound, "LoadDirectoryFilesFromPhysFSEx() did not include assets/text.txt");
+        AssertNot(nestedTextFound, "LoadDirectoryFilesFromPhysFSEx() should not recurse when scanSubdirs is false");
 
         // Load all the files and directories, with subdirectories.
-        FilePathList recursiveFiles = LoadDirectoryFilesExFromPhysFS("assets", ".txt;DIR", true);
+        FilePathList recursiveFiles = LoadDirectoryFilesFromPhysFSEx("assets", ".txt;DIR", true);
         bool nestedDirectoryFound = false;
         bool nestedFileFound = false;
         bool deeperFileFound = false;
@@ -121,9 +121,9 @@ int main(int argc, char *argv[]) {
             }
         }
         UnloadDirectoryFiles(recursiveFiles);
-        Assert(nestedDirectoryFound, "LoadDirectoryFilesExFromPhysFS() did not include directories when requested");
-        Assert(nestedFileFound, "LoadDirectoryFilesExFromPhysFS() did not include nested files");
-        Assert(deeperFileFound, "LoadDirectoryFilesExFromPhysFS() did not include deeper nested files");
+        Assert(nestedDirectoryFound, "LoadDirectoryFilesFromPhysFSEx() did not include directories when requested");
+        Assert(nestedFileFound, "LoadDirectoryFilesFromPhysFSEx() did not include nested files");
+        Assert(deeperFileFound, "LoadDirectoryFilesFromPhysFSEx() did not include deeper nested files");
     }
 
     // LoadFileTextFromPhysFS()

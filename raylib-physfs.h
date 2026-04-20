@@ -56,7 +56,7 @@ RAYLIB_PHYSFS_DEF bool SetPhysFSWriteDirectory(const char* newDir);             
 RAYLIB_PHYSFS_DEF bool SaveFileDataToPhysFS(const char* fileName, void* data, int bytesToWrite);  // Save the given file data in PhysFS
 RAYLIB_PHYSFS_DEF bool SaveFileTextToPhysFS(const char* fileName, const char* text);    // Save the given file text in PhysFS
 RAYLIB_PHYSFS_DEF FilePathList LoadDirectoryFilesFromPhysFS(const char* dirPath);  // Get filenames in a directory path (memory should be freed)
-RAYLIB_PHYSFS_DEF FilePathList LoadDirectoryFilesExFromPhysFS(const char *basePath, const char *filter, bool scanSubdirs); // Get directory filepaths with filtering and optional recursive scan (memory should be freed)
+RAYLIB_PHYSFS_DEF FilePathList LoadDirectoryFilesFromPhysFSEx(const char *basePath, const char *filter, bool scanSubdirs); // Get directory filepaths with filtering and optional recursive scan (memory should be freed)
 RAYLIB_PHYSFS_DEF long GetFileModTimeFromPhysFS(const char* fileName);            // Get file modification time (last write time) from PhysFS
 RAYLIB_PHYSFS_DEF Image LoadImageFromPhysFS(const char* fileName);                // Load an image from PhysFS
 RAYLIB_PHYSFS_DEF Texture2D LoadTextureFromPhysFS(const char* fileName);          // Load a texture from PhysFS
@@ -600,7 +600,7 @@ static bool LoadDirectoryFilesFromPhysFSShouldInclude(const char *path, PHYSFS_F
     return false;
 }
 
-static bool LoadDirectoryFilesExFromPhysFSScan(const char *basePath, FilePathList *files, unsigned int *capacity, const char *filter, bool scanSubdirs) {
+static bool LoadDirectoryFilesFromPhysFSExScan(const char *basePath, FilePathList *files, unsigned int *capacity, const char *filter, bool scanSubdirs) {
     char **entries = PHYSFS_enumerateFiles(basePath);
     if (entries == NULL) {
         TracePhysFSError(basePath);
@@ -648,7 +648,7 @@ static bool LoadDirectoryFilesExFromPhysFSScan(const char *basePath, FilePathLis
         }
 
         if (scanSubdirs && (stat.filetype == PHYSFS_FILETYPE_DIRECTORY)) {
-            if (!LoadDirectoryFilesExFromPhysFSScan(fullPath, files, capacity, filter, scanSubdirs)) {
+            if (!LoadDirectoryFilesFromPhysFSExScan(fullPath, files, capacity, filter, scanSubdirs)) {
                 MemFree(fullPath);
                 success = false;
                 break;
@@ -662,7 +662,7 @@ static bool LoadDirectoryFilesExFromPhysFSScan(const char *basePath, FilePathLis
     return success;
 }
 
-FilePathList LoadDirectoryFilesExFromPhysFS(const char *basePath, const char *filter, bool scanSubdirs) {
+FilePathList LoadDirectoryFilesFromPhysFSEx(const char *basePath, const char *filter, bool scanSubdirs) {
     FilePathList files = { 0 };
     if ((basePath == NULL) || (basePath[0] == '\0')) {
         TraceLog(LOG_WARNING, "PHYSFS: Can't get files from an empty directory path");
@@ -675,7 +675,7 @@ FilePathList LoadDirectoryFilesExFromPhysFS(const char *basePath, const char *fi
     }
 
     unsigned int capacity = 0;
-    if (!LoadDirectoryFilesExFromPhysFSScan(basePath, &files, &capacity, filter, scanSubdirs)) {
+    if (!LoadDirectoryFilesFromPhysFSExScan(basePath, &files, &capacity, filter, scanSubdirs)) {
         UnloadDirectoryFiles(files);
         return (FilePathList) { 0 };
     }
@@ -691,7 +691,7 @@ FilePathList LoadDirectoryFilesExFromPhysFS(const char *basePath, const char *fi
  * @see UnloadDirectoryFiles()
  */
 FilePathList LoadDirectoryFilesFromPhysFS(const char* dirPath) {
-    return LoadDirectoryFilesExFromPhysFS(dirPath, NULL, false);
+    return LoadDirectoryFilesFromPhysFSEx(dirPath, NULL, false);
 }
 
 /**
