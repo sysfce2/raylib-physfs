@@ -41,10 +41,10 @@
 extern "C" {
 #endif
 
-RAYLIB_PHYSFS_DEF bool InitPhysFS();                                              // Initialize the PhysFS file system
+RAYLIB_PHYSFS_DEF bool InitPhysFS(void);                                              // Initialize the PhysFS file system
 RAYLIB_PHYSFS_DEF bool InitPhysFSEx(const char* newDir, const char* mountPoint);  // Initialize the PhysFS file system with a mount point.
-RAYLIB_PHYSFS_DEF bool ClosePhysFS();                                             // Close the PhysFS file system
-RAYLIB_PHYSFS_DEF bool IsPhysFSReady();                                           // Check if PhysFS has been initialized successfully
+RAYLIB_PHYSFS_DEF bool ClosePhysFS(void);                                             // Close the PhysFS file system
+RAYLIB_PHYSFS_DEF bool IsPhysFSReady(void);                                           // Check if PhysFS has been initialized successfully
 RAYLIB_PHYSFS_DEF bool MountPhysFS(const char* newDir, const char* mountPoint);   // Mount the given directory or archive as a mount point
 RAYLIB_PHYSFS_DEF bool MountPhysFSFromMemory(const unsigned char *fileData, int dataSize, const char* newDir, const char* mountPoint);  // Mount the given file data as a mount point
 RAYLIB_PHYSFS_DEF bool UnmountPhysFS(const char* oldDir);                         // Unmounts the given directory
@@ -64,7 +64,7 @@ RAYLIB_PHYSFS_DEF Wave LoadWaveFromPhysFS(const char* fileName);                
 RAYLIB_PHYSFS_DEF Music LoadMusicStreamFromPhysFS(const char* fileName);          // Load music data from PhysFS
 RAYLIB_PHYSFS_DEF Font LoadFontFromPhysFS(const char* fileName, int fontSize, int *fontChars, int charsCount);  // Load a font from PhysFS
 RAYLIB_PHYSFS_DEF Shader LoadShaderFromPhysFS(const char* vsFileName, const char* fsFileName);  // Load shader from PhysFS
-RAYLIB_PHYSFS_DEF void SetPhysFSCallbacks();                                      // Set the raylib file loader/saver callbacks to use PhysFS
+RAYLIB_PHYSFS_DEF void SetPhysFSCallbacks(void);                                      // Set the raylib file loader/saver callbacks to use PhysFS
 RAYLIB_PHYSFS_DEF const char* GetPrefDirectory(const char *organization, const char *application); // Get the user's current config directory for the application.
 
 #ifdef __cplusplus
@@ -177,7 +177,7 @@ unsigned char* LoadFileDataFromPhysFS(const char* fileName, int* bytesRead) {
  *
  * @see ClosePhysFS()
  */
-bool InitPhysFS() {
+bool InitPhysFS(void) {
     // Initialize PhysFS.
     if (PHYSFS_init(NULL) == 0) {
         TracePhysFSError("InitPhysFS() failed");
@@ -211,7 +211,7 @@ bool InitPhysFSEx(const char* newDir, const char* mountPoint) {
  *
  * @see InitPhysFS()
  */
-bool IsPhysFSReady() {
+bool IsPhysFSReady(void) {
     return PHYSFS_isInit() != 0;
 }
 
@@ -718,7 +718,7 @@ long GetFileModTimeFromPhysFS(const char* fileName) {
  *
  * @return True on success, false on failure.
  */
-bool ClosePhysFS() {
+bool ClosePhysFS(void) {
     if (PHYSFS_deinit() == 0) {
         TracePhysFSError("ClosePhysFS() unsuccessful");
         return false;
@@ -735,7 +735,7 @@ bool ClosePhysFS() {
  * @see SetLoadFileTextCallback()
  * @see SetSaveFileTextCallback()
  */
-void SetPhysFSCallbacks() {
+void SetPhysFSCallbacks(void) {
     SetLoadFileDataCallback(LoadFileDataFromPhysFS);
     SetSaveFileDataCallback(SaveFileDataToPhysFS);
     SetLoadFileTextCallback(LoadFileTextFromPhysFS);
