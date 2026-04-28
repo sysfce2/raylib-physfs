@@ -1,4 +1,3 @@
-
 # Add the cmake module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 
@@ -10,6 +9,10 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/audio/resources/ DESTINATION ${CMAKE_CURRE
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders/resources/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resources/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/text/resources/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resources/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/textures/resources/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resources/)
+
+add_executable(core_physfs_platform)
+target_sources(core_physfs_platform PRIVATE "${CMAKE_CURRENT_LIST_DIR}/core/core_physfs_platform.c")
+target_link_libraries(core_physfs_platform PRIVATE raylib physfs-static raylib_physfs)
 
 add_executable(audio_music_stream)
 target_sources(audio_music_stream PRIVATE "${CMAKE_CURRENT_LIST_DIR}/audio/audio_music_stream.c")
