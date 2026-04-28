@@ -79,7 +79,7 @@ const char* GetPrefDirectory(const char *organization, const char *application);
 
 ### Raylib Platform
 
-[`physfs_platform_raylib.c`](physfs_platform_raylib.c) implements the PhysFS platform abstraction layer using raylib's own file API (`LoadFileData`, `SaveFileData`, `LoadDirectoryFiles`, `MakeDirectory`, etc.), similar to [`physfs_platform_unix.c`](https://github.com/icculus/physfs/blob/main/src/physfs_platform_unix.c) in the PhysFS source. This is useful on platforms where raylib provides a custom file I/O layer.
+[`physfs_platform_raylib.c`](physfs_platform_raylib.c) implements the PhysFS platform abstraction layer using raylib's own file API (`LoadFileData`, `SaveFileData`, etc.). This is useful on platforms where raylib provides a custom file I/O layer.
 
 Enable it with the `RAYLIB_PHYSFS_PLATFORM_RAYLIB` CMake option:
 
@@ -94,8 +94,6 @@ Or define `PHYSFS_PLATFORM_RAYLIB` before including the implementation:
 #define RAYLIB_PHYSFS_IMPLEMENTATION
 #include "raylib-physfs.h"
 ```
-
-> **Note:** `PHYSFS_PLATFORM_RAYLIB` and `SetPhysFSCallbacks()` are mutually exclusive. `SetPhysFSCallbacks()` routes `LoadFileData` through PhysFS; the raylib platform routes PhysFS through `LoadFileData` — combining them creates a circular dependency.
 
 ### Defines
 
